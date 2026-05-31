@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the paper below."
+title: "Position: State-of-the-Art Claims Require State-of-the-Art Evidence"
+type: software
+authors:
+  - family-names: Oh
+    given-names: YongKyung
+    orcid: "https://orcid.org/0000-0002-8027-3433"
+repository-code: "https://github.com/yongkyung-oh/SOTA"
+license: MIT
+preferred-citation:
+  type: conference-paper
+  title: "Position: State-of-the-Art Claims Require State-of-the-Art Evidence"
+  authors:
+    - family-names: Oh
+      given-names: YongKyung
+      orcid: "https://orcid.org/0000-0002-8027-3433"
+  collection-title: "Proceedings of the International Conference on Machine Learning (ICML)"
+  collection-type: proceedings
+  conference:
+    name: "International Conference on Machine Learning"
+    alias: "ICML 2026"
+  year: 2026
+  notes: "Accepted as a position paper at ICML 2026; in press. Proceedings volume, pages, and DOI are not yet available. Until the official proceedings appear, please cite the arXiv preprint (arXiv:2605.17273)."
+  url: "https://arxiv.org/abs/2605.17273"
+  identifiers:
+    - type: other
+      value: "arXiv:2605.17273"
+      description: "arXiv preprint identifier"
+    - type: doi
+      value: "10.48550/arXiv.2605.17273"
+      description: "arXiv preprint DOI"
