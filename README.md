@@ -2,10 +2,10 @@
 
 **TL;DR:** A position paper arguing that a marginal gain in mean score signals a top average rank, not genuine superiority. Across ten cross-domain benchmarks, in over half of top-model comparisons at least one commonly assumed property of superiority fails to hold, with reported gains often driven by outlier datasets rather than consistent improvement. This repository hosts the accompanying analysis and benchmarking code.
 
-**Author:** YongKyung Oh
-**Venue:** ICML 2026 (position paper, in press)
-**Paper:** [arXiv:2605.17273](https://arxiv.org/abs/2605.17273) · arXiv DOI: [10.48550/arXiv.2605.17273](https://doi.org/10.48550/arXiv.2605.17273)
-**Keywords:** state-of-the-art evaluation, benchmarking, statistical significance, machine learning evaluation
+- **Author:** YongKyung Oh
+- **Venue:** ICML 2026 (position paper, in press)
+- **Paper:** [arXiv:2605.17273](https://arxiv.org/abs/2605.17273) · arXiv DOI: [10.48550/arXiv.2605.17273](https://doi.org/10.48550/arXiv.2605.17273)
+- **Keywords:** state-of-the-art evaluation, benchmarking, statistical significance, machine learning evaluation
 
 ## Overview
 
