@@ -1,0 +1,5 @@
+# For an exact match of the paper's MMLU table, install NumPy 1.x (numpy<2).
+# See the README remark on exact reproduction. Any recent NumPy still runs.
+numpy
+pandas
+scipy

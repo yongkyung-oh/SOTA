@@ -1,0 +1,56 @@
+{
+  "benchmark": "MMLU",
+  "name": "HELM MMLU Leaderboard",
+  "paper": {
+    "arxiv_id": "2605.17273",
+    "title": "Position: State-of-the-Art Claims Require State-of-the-Art Evidence",
+    "table": "Table 1"
+  },
+  "official_source": {
+    "project_url": "https://crfm.stanford.edu/helm/mmlu/",
+    "config_url": "https://crfm.stanford.edu/helm/mmlu/latest/config.js",
+    "benchmark_output_base_url": "https://storage.googleapis.com/crfm-helm-public/gzip/mmlu/benchmark_output/",
+    "release": "v1.13.0",
+    "snapshot_date": "2025-01-10",
+    "leaderboard_group": "mmlu",
+    "leaderboard_json": "releases/v1.13.0/groups/mmlu.json"
+  },
+  "reference_snapshot": {
+    "path": "reference/mmlu_helm_2025-01-10.csv",
+    "description": "Three-decimal HELM MMLU leaderboard snapshot used for the MMLU reproduction check."
+  },
+  "selection": {
+    "direction": "higher_better",
+    "score_column": "MMLU All Subjects - EM",
+    "analysis_metric": "EM (Exact Match)",
+    "top_k": 20,
+    "datasets": 57
+  },
+  "thresholds": {
+    "tau_w": 0.6,
+    "tau_d": 0.2,
+    "tau_b": 0.2,
+    "pass_rule": "metric > threshold",
+    "failure_rule": "metric <= threshold"
+  },
+  "paper_table1_mmlu": {
+    "models_selected": 20,
+    "models_total": 79,
+    "datasets_selected": 57,
+    "datasets_total": 57,
+    "model_pairs": 190,
+    "score_gap": 0.0007,
+    "score_gap_percent": 0.08,
+    "wilcoxon_p_lt_0_05_percent": 74.74,
+    "cohens_d_mean": 0.53,
+    "cohens_d_std": 0.35,
+    "magnitude_violation_percent": 23.16,
+    "win_rate_mean_percent": 69.88,
+    "win_rate_std_percent": 16.10,
+    "consistency_violation_percent": 33.68,
+    "breakpoint_rate_mean_percent": 39.45,
+    "breakpoint_rate_std_percent": 29.24,
+    "stability_violation_percent": 35.26,
+    "fragility_rate_percent": 39.47
+  }
+}
