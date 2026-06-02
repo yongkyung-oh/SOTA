@@ -1,0 +1,24 @@
+# Environment for the sota-evidence package (Table 1, MMLU).
+# Independent of the sibling packages. It intentionally mirrors their
+# dependencies so reproduced numbers match across the SOTA reproduction packages.
+#
+# Runs on any recent NumPy. For an EXACT match of the paper's MMLU table,
+# install NumPy 1.x (e.g. `numpy<2`): the breakdown-point check compares two
+# subset means that are exactly tied at one step, and NumPy >= 2.0 resolves that
+# tie the other way (MMLU breakdown-point mean 39.45 -> 39.43). See the README
+# remark on exact reproduction. The `dev` conda env (python 3.10, numpy 1.25)
+# reproduces the paper exactly.
+#
+#   conda env create -f environment.yml
+#   conda activate sota-evidence
+#
+name: sota-evidence
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - numpy
+  - pandas
+  - scipy
+  - matplotlib
+  - pip

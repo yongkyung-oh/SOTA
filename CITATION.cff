@@ -8,6 +8,11 @@ authors:
     orcid: "https://orcid.org/0000-0002-8027-3433"
 repository-code: "https://github.com/yongkyung-oh/SOTA"
 license: MIT
+keywords:
+  - Benchmarking
+  - Evaluation
+  - Statistical Methods
+  - Reproducibility
 preferred-citation:
   type: conference-paper
   title: "Position: State-of-the-Art Claims Require State-of-the-Art Evidence"

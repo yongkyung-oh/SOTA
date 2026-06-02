@@ -1,0 +1,19 @@
+# Environment for the sota-counter package (Figure 1 + Appendix A).
+# Independent of the sibling packages. It intentionally mirrors their
+# dependencies (same Python/NumPy/pandas/matplotlib) so reproduced numbers
+# match across the SOTA reproduction packages.
+#
+#   conda env create -f environment.yml
+#   conda activate sota-counter
+#   python -m pip install -e .   # this package only
+#
+name: sota-counter
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - numpy
+  - pandas
+  - scipy
+  - matplotlib
+  - pip
