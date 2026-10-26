@@ -142,11 +142,27 @@ shown in Figure 1; the rest are related AI/ML venues for comparison.
 ## 📄 Citation
 
 ```bibtex
-@misc{oh_sota_2026,
-  title        = {Position: {State}-of-the-{Art} {Claims} {Require} {State}-of-the-{Art} {Evidence}},
-  author       = {Oh, YongKyung},
-  year         = 2026,
-  publisher    = {arXiv},
-  doi          = {10.48550/arXiv.2605.17273}
+@inproceedings{oh_sota_2026,
+  author      = {Oh, YongKyung},
+  title       = {Position: {State}-of-the-{Art} {Claims} {Require} {State}-of-the-{Art} {Evidence}},
+  booktitle   = {Proceedings of the 43rd {International} {Conference} on {Machine} {Learning}},
+  series      = {Proceedings of Machine Learning Research},
+  volume      = 306,
+  pages       = {171583--171601},
+  publisher   = {PMLR},
+  year        = 2026,
+  editor      = {Zhang, Tong and Dudik, Miroslav and Jaggi, Martin and Agarwal, Alekh and Li, Sharon and Schuurmans, Dale and Zhu, Jerry and Berkenkamp, Felix and Dong, Hanze and Bietti, Alberto},
+  url         = {https://proceedings.mlr.press/v306/oh26d.html}
+}
+```
+
+```bibtex
+@misc{oh_sota_2026_arxiv,
+  author      = {Oh, YongKyung},
+  title       = {Position: {State}-of-the-{Art} {Claims} {Require} {State}-of-the-{Art} {Evidence}},
+  publisher   = {arXiv},
+  year        = 2026,
+  doi         = {10.48550/arXiv.2605.17273},
+  url         = {https://arxiv.org/abs/2605.17273}
 }
 ```
