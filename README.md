@@ -3,8 +3,8 @@
 **TL;DR:** A position paper arguing that a marginal gain in mean score signals a top average rank, not genuine superiority. Across ten cross-domain benchmarks, in over half of top-model comparisons at least one commonly assumed property of superiority fails to hold, with reported gains often driven by outlier datasets rather than consistent improvement. This repository is the home of the paper and its reproducibility code.
 
 - **Author:** YongKyung Oh
-- **Venue:** ICML 2026 (position paper, in press)
-- **Paper:** [arXiv:2605.17273](https://arxiv.org/abs/2605.17273) · arXiv DOI: [10.48550/arXiv.2605.17273](https://doi.org/10.48550/arXiv.2605.17273)
+- **Venue:** ICML 2026 (position paper), PMLR 306, pp. 171583–171601
+- **Paper:** [PMLR v306](https://proceedings.mlr.press/v306/oh26d.html) · arXiv: [arXiv:2605.17273](https://arxiv.org/abs/2605.17273) · arXiv DOI: [10.48550/arXiv.2605.17273](https://doi.org/10.48550/arXiv.2605.17273)
 - **Keywords:** Benchmarking, Evaluation, Statistical Methods, Reproducibility
 
 ## Overview
@@ -27,17 +27,32 @@ Each package is self-contained and regenerates part of the paper from public dat
 
 ## 📄 Citation
 
-Machine-readable metadata, including the ICML 2026 in-press preferred citation,
-is in [`CITATION.cff`](CITATION.cff). Until the official proceedings appear,
-please cite the arXiv version:
+Machine-readable metadata is in [`CITATION.cff`](CITATION.cff). Please cite the
+official PMLR version; the arXiv entry is listed separately.
 
 ```bibtex
-@misc{oh_sota_2026,
-  title        = {Position: {State}-of-the-{Art} {Claims} {Require} {State}-of-the-{Art} {Evidence}},
-  author       = {Oh, YongKyung},
-  year         = 2026,
-  publisher    = {arXiv},
-  doi          = {10.48550/arXiv.2605.17273}
+@inproceedings{oh_sota_2026,
+  author      = {Oh, YongKyung},
+  title       = {Position: {State}-of-the-{Art} {Claims} {Require} {State}-of-the-{Art} {Evidence}},
+  booktitle   = {Proceedings of the 43rd {International} {Conference} on {Machine} {Learning}},
+  series      = {Proceedings of Machine Learning Research},
+  volume      = 306,
+  pages       = {171583--171601},
+  publisher   = {PMLR},
+  year        = 2026,
+  editor      = {Zhang, Tong and Dudik, Miroslav and Jaggi, Martin and Agarwal, Alekh and Li, Sharon and Schuurmans, Dale and Zhu, Jerry and Berkenkamp, Felix and Dong, Hanze and Bietti, Alberto},
+  url         = {https://proceedings.mlr.press/v306/oh26d.html}
+}
+```
+
+```bibtex
+@misc{oh_sota_2026_arxiv,
+  author      = {Oh, YongKyung},
+  title       = {Position: {State}-of-the-{Art} {Claims} {Require} {State}-of-the-{Art} {Evidence}},
+  publisher   = {arXiv},
+  year        = 2026,
+  doi         = {10.48550/arXiv.2605.17273},
+  url         = {https://arxiv.org/abs/2605.17273}
 }
 ```
 
