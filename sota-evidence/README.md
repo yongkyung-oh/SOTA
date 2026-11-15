@@ -38,10 +38,10 @@ just the published scores.
 ```bash
 conda env create -f environment.yml
 conda activate sota-evidence
-python scripts/reproduce_mmlu.py all --offline
+python scripts/reproduce_mmlu.py all --offline --artifacts-dir "$HOME/sota-output/mmlu"
 ```
 
-The run reproduces the paper's MMLU numbers and prints `PASS` when they match.
+The command computes MMLU statistics and compares them with the paper's reference values.
 
 <details>
 <summary>📦 Other ways to run</summary>
@@ -49,14 +49,14 @@ The run reproduces the paper's MMLU numbers and prints `PASS` when they match.
 ```bash
 # pip instead of conda
 pip install -r requirements.txt
-python scripts/reproduce_mmlu.py all --offline
+python scripts/reproduce_mmlu.py all --offline --artifacts-dir "$HOME/sota-output/mmlu"
 
 # online: download the live HELM data and check it against the snapshot
-python scripts/reproduce_mmlu.py all
+python scripts/reproduce_mmlu.py all --artifacts-dir "$HOME/sota-output/mmlu"
 ```
 
-Outputs (tables and reports) are written under `artifacts/` and are not tracked
-by Git.
+Use `--artifacts-dir` to choose an output directory outside the source checkout.
+The commands above write tables under `$HOME/sota-output/mmlu/results/`.
 
 </details>
 
@@ -64,7 +64,7 @@ by Git.
 
 ## 📋 Expected result
 
-The check reproduces the paper's MMLU row (top 20 models, 190 pairs):
+The paper reports the following MMLU values (top 20 models, 190 pairs):
 
 | Quantity | Expected |
 |---|---:|
@@ -81,22 +81,9 @@ The check reproduces the paper's MMLU row (top 20 models, 190 pairs):
 > least one of three tests: consistent wins, a meaningful effect size, or
 > stability to removing favorable subjects.*
 
-> [!IMPORTANT]
-> **NumPy version and exact reproduction.** The package runs on any recent NumPy,
-> but the breakdown-point rate matches the paper's **39.45** exactly only on
-> **NumPy 1.x**. In two of the 190 pairs, the breakdown step compares two subset
-> means that are *exactly tied*; NumPy's summation order decides the tie, and
-> NumPy ≥ 2.0 resolves it the other way, giving **39.43** (fragility itself is
-> unchanged at 39.47%). To reproduce the published table value, use `numpy<2`
-> (e.g. the included `environment.yml` with NumPy 1.25).
-
 ---
 
 ## 🔖 Data version
-
-> [!TIP]
-> The package is pinned to the exact snapshot used in the paper, so the numbers
-> match out of the box.
 
 The MMLU scores come from HELM release **`v1.13.0`** (**2025-01-10**) — 79 models
 across 57 subjects.

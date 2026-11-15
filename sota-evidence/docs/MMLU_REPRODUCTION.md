@@ -2,7 +2,8 @@
 
 ## Source Data
 
-The online collection path uses HELM MMLU release `v1.13.0`.
+Offline mode uses the included HELM MMLU `v1.13.0` snapshot. Online mode
+uses the release advertised by HELM; pass `--release v1.13.0` to select it explicitly.
 
 - Project page: `https://crfm.stanford.edu/helm/mmlu/`
 - Snapshot date: `2025-01-10`
@@ -39,11 +40,13 @@ The thresholds are:
 
 ## Output Files
 
-Running `python scripts/reproduce_mmlu.py all` writes:
+```bash
+python scripts/reproduce_mmlu.py all --artifacts-dir "$HOME/sota-output/mmlu"
+```
 
-- `artifacts/mmlu/source/`: collected HELM files and normalized CSV.
-- `artifacts/mmlu/processed/`: full and top-k matrices.
-- `artifacts/mmlu/results/`: pairwise diagnostics and paper-summary CSV.
-- `artifacts/mmlu/reports/`: data comparison and paper verification reports.
+Use `--artifacts-dir` to choose an output directory outside the source checkout.
+The command above writes:
 
-Generated outputs are not tracked in the release package.
+- `$HOME/sota-output/mmlu/source/`: collected HELM files and normalized CSV.
+- `$HOME/sota-output/mmlu/processed/`: full and top-k matrices.
+- `$HOME/sota-output/mmlu/results/`: pairwise diagnostics and paper-summary CSV.

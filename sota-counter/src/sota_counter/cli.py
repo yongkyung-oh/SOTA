@@ -22,14 +22,23 @@ def build_parser() -> argparse.ArgumentParser:
 
     reproduce = subparsers.add_parser("reproduce", help="Generate and check results.")
     reproduce.add_argument("--paperlists-dir", type=Path, default=Path("data/paperlists"))
-    reproduce.add_argument("--out-dir", type=Path, default=Path("results"))
+    reproduce.add_argument("--out-dir", type=Path, required=True,
+                           help="Output directory outside the source tree.")
 
     return parser
 
 
 def reproduce(args: argparse.Namespace) -> int:
     paperlists_dir = args.paperlists_dir
-    out_dir = args.out_dir
+    out_dir = args.out_dir.expanduser().resolve()
+    package_root = Path(__file__).resolve().parents[2]
+    source_root = next(
+        (parent for parent in (package_root, *package_root.parents)
+         if (parent / ".git").exists()),
+        package_root.parent,
+    )
+    if out_dir == source_root or source_root in out_dir.parents:
+        raise ValueError("Choose an output directory outside the source tree.")
 
     df = compute_counts(paperlists_dir)
     write_tables(df, out_dir)

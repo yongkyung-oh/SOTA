@@ -40,34 +40,32 @@ conda activate sota-counter
 python -m pip install -e .
 mkdir -p data
 git clone https://github.com/papercopilot/paperlists data/paperlists
-python -m sota_counter reproduce
+python -m sota_counter reproduce --out-dir "$HOME/sota-output/counter"
 ```
 
 Point at a different Paper Copilot checkout if you already have one:
 
 ```bash
-python -m sota_counter reproduce --paperlists-dir path/to/paperlists
+python -m sota_counter reproduce --paperlists-dir path/to/paperlists --out-dir "$HOME/sota-output/counter"
 ```
 
 <details>
 <summary>📦 What it generates</summary>
 
+Choose an output directory outside the source checkout with `--out-dir`.
+
 ```text
-results/
+$HOME/sota-output/counter/
 ├── figure1/
 │   ├── trend.png            # Figure 1
 │   ├── trend.pdf
 │   └── figure1_input.csv
-├── tables/
-│   ├── accepted_counts.csv
-│   ├── sota_counts.csv
-│   ├── sota_ratios.csv
-│   └── appendix_a_tables.tex   # Appendix A
-└── check.json               # data commit · reference match · files written
+└── tables/
+    ├── accepted_counts.csv
+    ├── sota_counts.csv
+    ├── sota_ratios.csv
+    └── appendix_a_tables.tex   # Appendix A
 ```
-
-`results/check.json` records the data commit, whether the output matches the
-reference tables, and whether the expected files were written.
 
 </details>
 
@@ -89,9 +87,7 @@ reference tables, and whether the expected files were written.
 
 ## 🔖 Data version
 
-> [!TIP]
-> Current Paper Copilot data works out of the box. To reproduce the **exact**
-> paper tables, pin the reference commit below.
+Use the reference commit below for the paper tables.
 
 The paper tables were generated from Paper Copilot commit:
 

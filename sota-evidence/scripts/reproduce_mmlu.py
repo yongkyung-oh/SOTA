@@ -29,7 +29,6 @@ from scipy import stats
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 RELEASE_ROOT = SCRIPT_DIR.parent
-DEFAULT_ARTIFACTS_DIR = RELEASE_ROOT / "artifacts" / "mmlu"
 MANIFEST_PATH = RELEASE_ROOT / "manifests" / "mmlu.json"
 
 BENCHMARK_NAME = "MMLU"
@@ -64,6 +63,14 @@ def load_manifest() -> Dict[str, Any]:
 
 
 def build_paths(artifacts_dir: Path) -> Paths:
+    artifacts_dir = artifacts_dir.expanduser().resolve()
+    source_root = next(
+        (parent for parent in (RELEASE_ROOT, *RELEASE_ROOT.parents)
+         if (parent / ".git").exists()),
+        RELEASE_ROOT.parent,
+    )
+    if artifacts_dir == source_root or source_root in artifacts_dir.parents:
+        raise ValueError("Choose an output directory outside the source tree.")
     return Paths(
         artifacts=artifacts_dir,
         source=artifacts_dir / "source",
@@ -1007,8 +1014,8 @@ def add_common_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--artifacts-dir",
         type=Path,
-        default=DEFAULT_ARTIFACTS_DIR,
-        help="Directory for generated artifacts.",
+        required=True,
+        help="Output directory outside the source tree.",
     )
     parser.add_argument(
         "--release",
