@@ -81,6 +81,11 @@ The paper reports the following MMLU values (top 20 models, 190 pairs):
 > least one of three tests: consistent wins, a meaningful effect size, or
 > stability to removing favorable subjects.*
 
+Some model pairs have exactly tied subset means at a removal step, and
+floating-point rounding decides those comparisons. The breakdown-point rate can
+therefore differ slightly across numerical environments; the stability violation
+(35.26%) and fragility rate (39.47%) do not depend on how these ties are resolved.
+
 ---
 
 ## 🔖 Data version
