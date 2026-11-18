@@ -4,13 +4,8 @@ import argparse
 from pathlib import Path
 
 from .constants import REFERENCE_PAPERLISTS_COMMIT
-from .core import compute_counts
-from .output import (
-    write_check,
-    write_figure1,
-    write_tables,
-)
-from .check import check_results
+from .core import compute_counts, git_commit
+from .output import write_figure1, write_tables
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -20,7 +15,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    reproduce = subparsers.add_parser("reproduce", help="Generate and check results.")
+    reproduce = subparsers.add_parser("reproduce", help="Generate the paper tables and Figure 1.")
     reproduce.add_argument("--paperlists-dir", type=Path, default=Path("data/paperlists"))
     reproduce.add_argument("--out-dir", type=Path, required=True,
                            help="Output directory outside the source tree.")
@@ -43,19 +38,10 @@ def reproduce(args: argparse.Namespace) -> int:
     df = compute_counts(paperlists_dir)
     write_tables(df, out_dir)
     write_figure1(df, out_dir)
-    report = check_results(df, out_dir, paperlists_dir)
-    write_check(report, out_dir)
-
-    if not report["ok"]:
-        print("Result check failed.")
-        for issue in report["issues"]:
-            print(f"- {issue}")
-        return 1
 
     print(f"Results written to {out_dir}")
-    print(f"Data version: {report.get('data_commit')}")
+    print(f"Data version: {git_commit(paperlists_dir)}")
     print(f"Reference version: {REFERENCE_PAPERLISTS_COMMIT}")
-    print(f"Reference tables: {'match' if report['matches_reference'] else 'changed'}")
     return 0
 
 

@@ -17,7 +17,7 @@
   },
   "reference_snapshot": {
     "path": "reference/mmlu_helm_2025-01-10.csv",
-    "description": "Three-decimal HELM MMLU leaderboard snapshot used for the MMLU reproduction check."
+    "description": "Three-decimal HELM MMLU leaderboard snapshot."
   },
   "selection": {
     "direction": "higher_better",
@@ -32,25 +32,5 @@
     "tau_b": 0.2,
     "pass_rule": "metric > threshold",
     "failure_rule": "metric <= threshold"
-  },
-  "paper_table1_mmlu": {
-    "models_selected": 20,
-    "models_total": 79,
-    "datasets_selected": 57,
-    "datasets_total": 57,
-    "model_pairs": 190,
-    "score_gap": 0.0007,
-    "score_gap_percent": 0.08,
-    "wilcoxon_p_lt_0_05_percent": 74.74,
-    "cohens_d_mean": 0.53,
-    "cohens_d_std": 0.35,
-    "magnitude_violation_percent": 23.16,
-    "win_rate_mean_percent": 69.88,
-    "win_rate_std_percent": 16.10,
-    "consistency_violation_percent": 33.68,
-    "breakpoint_rate_mean_percent": 39.45,
-    "breakpoint_rate_std_percent": 29.24,
-    "stability_violation_percent": 35.26,
-    "fragility_rate_percent": 39.47
   }
 }

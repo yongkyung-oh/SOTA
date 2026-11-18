@@ -10,7 +10,7 @@ uses the release advertised by HELM; pass `--release v1.13.0` to select it expli
 - Main table JSON: `releases/v1.13.0/groups/mmlu.json`
 
 The HELM JSON contains full-precision values. The included reference CSV stores
-the same leaderboard in the three-decimal format used for the table check.
+the same leaderboard in three-decimal format.
 
 ## Preprocessing
 

@@ -41,7 +41,7 @@ conda activate sota-evidence
 python scripts/reproduce_mmlu.py all --offline --artifacts-dir "$HOME/sota-output/mmlu"
 ```
 
-The command computes MMLU statistics and compares them with the paper's reference values.
+The command computes the MMLU statistics.
 
 <details>
 <summary>📦 Other ways to run</summary>
@@ -51,7 +51,7 @@ The command computes MMLU statistics and compares them with the paper's referenc
 pip install -r requirements.txt
 python scripts/reproduce_mmlu.py all --offline --artifacts-dir "$HOME/sota-output/mmlu"
 
-# online: download the live HELM data and check it against the snapshot
+# online: download the HELM data
 python scripts/reproduce_mmlu.py all --artifacts-dir "$HOME/sota-output/mmlu"
 ```
 
@@ -59,32 +59,6 @@ Use `--artifacts-dir` to choose an output directory outside the source checkout.
 The commands above write tables under `$HOME/sota-output/mmlu/results/`.
 
 </details>
-
----
-
-## 📋 Expected result
-
-The paper reports the following MMLU values (top 20 models, 190 pairs):
-
-| Quantity | Expected |
-|---|---:|
-| Model pairs | 190 |
-| Win rate | 69.88 (16.10) |
-| Consistency violation | 33.68% |
-| Cohen's d | 0.53 (0.35) |
-| Magnitude violation | 23.16% |
-| Breakdown-point rate | 39.45 (29.24) |
-| Stability violation | 35.26% |
-| **Fragility rate** | **39.47%** |
-
-> *Fragility is the share of model pairs where the higher-mean model fails at
-> least one of three tests: consistent wins, a meaningful effect size, or
-> stability to removing favorable subjects.*
-
-Some model pairs have exactly tied subset means at a removal step, and
-floating-point rounding decides those comparisons. The breakdown-point rate can
-therefore differ slightly across numerical environments; the stability violation
-(35.26%) and fragility rate (39.47%) do not depend on how these ties are resolved.
 
 ---
 

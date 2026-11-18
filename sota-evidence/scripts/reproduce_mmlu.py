@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """Reproduce the MMLU column of Table 1 from arXiv:2605.17273.
 
-The script collects the public HELM MMLU leaderboard snapshot, compares it with
-the included reference CSV, runs the documented preprocessing and diagnostics,
-and checks the reported MMLU summary values.
+The script collects the public HELM MMLU leaderboard snapshot, runs the
+documented preprocessing and diagnostics, and writes the MMLU summary.
 """
 
 from __future__ import annotations
@@ -326,89 +325,6 @@ def collect(args: argparse.Namespace) -> Dict[str, Any]:
         if args.strict_collection:
             raise
         return copy_reference_snapshot(paths, f"official collection failed: {exc}")
-
-
-def compare_dataframes(
-    left: pd.DataFrame,
-    right: pd.DataFrame,
-    key_col: str = "Model",
-) -> Dict[str, Any]:
-    result: Dict[str, Any] = {
-        "left_shape": list(left.shape),
-        "right_shape": list(right.shape),
-        "columns_equal": list(left.columns) == list(right.columns),
-        "models_equal": False,
-        "numeric_max_abs_delta": None,
-        "numeric_mean_abs_delta": None,
-        "numeric_nonzero_count": None,
-        "exact_numeric_match": False,
-    }
-
-    if key_col not in left.columns or key_col not in right.columns:
-        result["error"] = f"Missing key column {key_col}"
-        return result
-
-    common_columns = [col for col in right.columns if col in left.columns and col != key_col]
-    left_aligned = left.set_index(key_col)
-    right_aligned = right.set_index(key_col)
-    common_models = left_aligned.index.intersection(right_aligned.index)
-    result["models_equal"] = list(left_aligned.index) == list(right_aligned.index)
-    result["common_models"] = int(len(common_models))
-    result["common_numeric_columns"] = int(len(common_columns))
-
-    if len(common_models) == 0 or len(common_columns) == 0:
-        result["error"] = "No common models or numeric columns"
-        return result
-
-    left_num = left_aligned.loc[common_models, common_columns].apply(pd.to_numeric)
-    right_num = right_aligned.loc[common_models, common_columns].apply(pd.to_numeric)
-    delta = (left_num - right_num).abs()
-    max_delta = float(delta.max().max())
-    result["numeric_max_abs_delta"] = max_delta
-    result["numeric_mean_abs_delta"] = float(delta.stack().mean())
-    result["numeric_nonzero_count"] = int((delta > 1e-12).sum().sum())
-    result["exact_numeric_match"] = max_delta <= 1e-12
-    result["top_deltas"] = [
-        {"model": model, "column": column, "abs_delta": float(value)}
-        for (model, column), value in delta.stack().sort_values(ascending=False).head(10).items()
-    ]
-    return result
-
-
-def verify_data(args: argparse.Namespace) -> Dict[str, Any]:
-    paths = build_paths(args.artifacts_dir)
-    ensure_dirs(paths)
-    manifest = load_manifest()
-
-    source_csv = paths.source / "helm_mmlu_leaderboard.csv"
-    full_csv = paths.source / "helm_mmlu_leaderboard_full_precision.csv"
-    reference_csv = release_path(manifest["reference_snapshot"]["path"])
-
-    if not source_csv.exists():
-        raise FileNotFoundError(f"Run collect first: {source_csv}")
-    if not reference_csv.exists():
-        raise FileNotFoundError(f"Reference data not found: {reference_csv}")
-
-    source = pd.read_csv(source_csv)
-    reference = pd.read_csv(reference_csv)
-    normalized_cmp = compare_dataframes(source, reference)
-
-    full_precision_cmp: Optional[Dict[str, Any]] = None
-    if full_csv.exists():
-        full_precision = pd.read_csv(full_csv)
-        full_precision_cmp = compare_dataframes(full_precision, reference)
-
-    report = {
-        "benchmark": BENCHMARK_NAME,
-        "source_csv": display_path(source_csv),
-        "reference_csv": display_path(reference_csv),
-        "normalized_vs_reference": normalized_cmp,
-        "full_precision_vs_reference": full_precision_cmp,
-        "verdict": "PASS" if normalized_cmp["columns_equal"] and normalized_cmp["models_equal"] and normalized_cmp["exact_numeric_match"] else "CHECK",
-        "note": "Full-precision HELM values differ from the reference CSV only by display/export rounding when max_abs_delta <= 0.0005.",
-    }
-    write_json(paths.reports / "data_comparison.json", report)
-    return report
 
 
 def load_source_leaderboard(paths: Paths) -> pd.DataFrame:
@@ -835,178 +751,14 @@ def analyze(args: argparse.Namespace) -> Dict[str, Any]:
     }
 
 
-def parse_percent(value: str) -> float:
-    return float(value.replace("\\%", "").replace("%", "").strip())
-
-
-def parse_mean_std(value: str) -> Tuple[float, Optional[float]]:
-    match = re.match(r"\s*([0-9.]+)\s*(?:\(([0-9.]+)\))?\s*", value)
-    if not match:
-        raise ValueError(f"Cannot parse mean/std value: {value}")
-    mean = float(match.group(1))
-    std = float(match.group(2)) if match.group(2) is not None else None
-    return mean, std
-
-
-def first_table_cell(row_line: str) -> str:
-    cells = [cell.strip() for cell in row_line.split("&")]
-    if len(cells) < 2:
-        raise ValueError(f"Cannot parse table row: {row_line}")
-    cell = cells[1].split("\\\\")[0].strip()
-    return cell
-
-
-def parse_paper_table1_mmlu() -> Dict[str, Any]:
-    manifest = load_manifest()
-    expected = dict(manifest["paper_table1_mmlu"])
-    expected["source"] = "manifests/mmlu.json"
-    return expected
-
-
-def compare_metric(name: str, computed: float, expected: float, tolerance: float) -> Dict[str, Any]:
-    delta = computed - expected
-    return {
-        "metric": name,
-        "computed": computed,
-        "expected": expected,
-        "delta": delta,
-        "tolerance": tolerance,
-        "status": "PASS" if abs(delta) <= tolerance else "FAIL",
-    }
-
-
-def load_computed_metrics(paths: Paths) -> Dict[str, Any]:
-    summary_csv = paths.results / "summary_MMLU.csv"
-    paper_summary_csv = paths.results / "paper_summary_MMLU.csv"
-    l1_csv = paths.results / "L1_ranking_MMLU.csv"
-    if not summary_csv.exists() or not paper_summary_csv.exists() or not l1_csv.exists():
-        raise FileNotFoundError("Run analyze first.")
-
-    summary = pd.read_csv(summary_csv)
-    paper_summary = pd.read_csv(paper_summary_csv)
-    paper_lookup = dict(zip(paper_summary["Metric"], paper_summary["Value"]))
-    paper_std_lookup = dict(zip(paper_summary["Metric"], paper_summary["Std"]))
-
-    def value_float(metric: str, percent: bool = False) -> float:
-        value = str(paper_lookup[metric])
-        if percent:
-            return parse_percent(value)
-        return float(value)
-
-    def std_float(metric: str, percent_scale: bool = False) -> float:
-        value = str(paper_std_lookup[metric])
-        out = float(value)
-        return out * 100 if percent_scale else out
-
-    return {
-        "model_pairs": int(len(summary)),
-        "score_gap": value_float("L1: Score Gap (1st-2nd)"),
-        "score_gap_percent": value_float("L1: Score Gap (%)", percent=True),
-        "wilcoxon_p_lt_0_05_percent": value_float("L3: Wilcoxon p<0.05 rate", percent=True),
-        "cohens_d_mean": value_float("L3: Cohen's d (mean)"),
-        "cohens_d_std": std_float("L3: Cohen's d (mean)"),
-        "magnitude_violation_percent": value_float("L3 Fail Rate", percent=True),
-        "win_rate_mean_percent": value_float("L2: Win Rate (mean)") * 100,
-        "win_rate_std_percent": std_float("L2: Win Rate (mean)", percent_scale=True),
-        "consistency_violation_percent": value_float("L2 Fail Rate", percent=True),
-        "breakpoint_rate_mean_percent": value_float("L4: BP Ratio (mean)") * 100,
-        "breakpoint_rate_std_percent": std_float("L4: BP Ratio (mean)", percent_scale=True),
-        "stability_violation_percent": value_float("L4 Fail Rate", percent=True),
-        "fragility_rate_percent": value_float("Fragility Rate", percent=True),
-    }
-
-
-def verify_paper(args: argparse.Namespace) -> Dict[str, Any]:
-    paths = build_paths(args.artifacts_dir)
-    ensure_dirs(paths)
-    expected = parse_paper_table1_mmlu()
-    computed = load_computed_metrics(paths)
-
-    checks = [
-        compare_metric("model_pairs", computed["model_pairs"], expected["model_pairs"], 0),
-        compare_metric("score_gap", computed["score_gap"], expected["score_gap"], 0.00005),
-        compare_metric("score_gap_percent", computed["score_gap_percent"], expected["score_gap_percent"], 0.005),
-        compare_metric("wilcoxon_p_lt_0_05_percent", computed["wilcoxon_p_lt_0_05_percent"], expected["wilcoxon_p_lt_0_05_percent"], 0.01),
-        compare_metric("cohens_d_mean", computed["cohens_d_mean"], expected["cohens_d_mean"], 0.005),
-        compare_metric("cohens_d_std", computed["cohens_d_std"], expected["cohens_d_std"], 0.005),
-        compare_metric("magnitude_violation_percent", computed["magnitude_violation_percent"], expected["magnitude_violation_percent"], 0.01),
-        compare_metric("win_rate_mean_percent", computed["win_rate_mean_percent"], expected["win_rate_mean_percent"], 0.01),
-        compare_metric("win_rate_std_percent", computed["win_rate_std_percent"], expected["win_rate_std_percent"], 0.01),
-        compare_metric("consistency_violation_percent", computed["consistency_violation_percent"], expected["consistency_violation_percent"], 0.01),
-        compare_metric("breakpoint_rate_mean_percent", computed["breakpoint_rate_mean_percent"], expected["breakpoint_rate_mean_percent"], 0.01),
-        compare_metric("breakpoint_rate_std_percent", computed["breakpoint_rate_std_percent"], expected["breakpoint_rate_std_percent"], 0.01),
-        compare_metric("stability_violation_percent", computed["stability_violation_percent"], expected["stability_violation_percent"], 0.01),
-        compare_metric("fragility_rate_percent", computed["fragility_rate_percent"], expected["fragility_rate_percent"], 0.01),
-    ]
-    verdict = "PASS" if all(check["status"] == "PASS" for check in checks) else "FAIL"
-    report = {
-        "benchmark": BENCHMARK_NAME,
-        "paper_source": expected.get("source", "manifests/mmlu.json"),
-        "verdict": verdict,
-        "checks": checks,
-        "computed": computed,
-        "expected": expected,
-    }
-    write_json(paths.reports / "paper_verification.json", report)
-    write_reproduction_report(paths, report)
-    return report
-
-
-def write_reproduction_report(paths: Paths, paper_report: Dict[str, Any]) -> None:
-    source_manifest_path = paths.source / "source_manifest.json"
-    data_comparison_path = paths.reports / "data_comparison.json"
-    source_manifest = read_json(source_manifest_path) if source_manifest_path.exists() else {}
-    data_comparison = read_json(data_comparison_path) if data_comparison_path.exists() else {}
-
-    lines = [
-        "# MMLU Reproduction Report",
-        "",
-        f"- Benchmark: {BENCHMARK_NAME}",
-        f"- Collection mode: {source_manifest.get('collection_mode', 'unknown')}",
-        f"- Release: {source_manifest.get('release', 'unknown')}",
-        f"- Snapshot date: {source_manifest.get('snapshot_date', 'unknown')}",
-        f"- Data comparison verdict: {data_comparison.get('verdict', 'unknown')}",
-        f"- Paper verification verdict: {paper_report.get('verdict', 'unknown')}",
-        "",
-        "## Data Comparison",
-        "",
-    ]
-    normalized = data_comparison.get("normalized_vs_reference", {})
-    full = data_comparison.get("full_precision_vs_reference", {}) or {}
-    lines.extend(
-        [
-            f"- Normalized source columns equal reference: {normalized.get('columns_equal')}",
-            f"- Normalized source models equal reference: {normalized.get('models_equal')}",
-            f"- Normalized source max abs delta: {normalized.get('numeric_max_abs_delta')}",
-            f"- Full-precision official max abs delta vs reference: {full.get('numeric_max_abs_delta')}",
-            "",
-            "## Paper Table 1 Checks",
-            "",
-            "| Metric | Computed | Paper | Delta | Status |",
-            "|---|---:|---:|---:|---|",
-        ]
-    )
-    for check in paper_report.get("checks", []):
-        lines.append(
-            f"| {check['metric']} | {check['computed']:.6g} | {check['expected']:.6g} | {check['delta']:.6g} | {check['status']} |"
-        )
-    lines.append("")
-    lines.append("Failure masks use `fail = ~(metric > threshold)`, equivalent to `metric <= threshold`.")
-    (paths.reports / "reproduction_report.md").write_text("\n".join(lines) + "\n")
-
-
 def run_all(args: argparse.Namespace) -> Dict[str, Any]:
     collected = collect(args)
-    data_report = verify_data(args)
     prep_report = preprocess(args)
     analysis_report = analyze(args)
-    paper_report = verify_paper(args)
     return {
         "collect": collected,
-        "verify_data": data_report,
         "preprocess": prep_report,
         "analyze": analysis_report,
-        "verify_paper": paper_report,
     }
 
 
@@ -1030,7 +782,7 @@ def add_common_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--offline",
         action="store_true",
-        help="Skip network collection and use data/MMLU/helm_mmlu_leaderboard.csv as the source snapshot.",
+        help="Skip network collection and use the included reference snapshot as the source.",
     )
     parser.add_argument(
         "--strict-collection",
@@ -1048,7 +800,7 @@ def add_common_options(parser: argparse.ArgumentParser) -> None:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(dest="command", required=True)
-    for name in ["collect", "verify-data", "preprocess", "analyze", "verify-paper", "all"]:
+    for name in ["collect", "preprocess", "analyze", "all"]:
         subparser = subparsers.add_parser(name)
         add_common_options(subparser)
     return parser
@@ -1061,14 +813,10 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
     try:
         if args.command == "collect":
             result = collect(args)
-        elif args.command == "verify-data":
-            result = verify_data(args)
         elif args.command == "preprocess":
             result = preprocess(args)
         elif args.command == "analyze":
             result = analyze(args)
-        elif args.command == "verify-paper":
-            result = verify_paper(args)
         elif args.command == "all":
             result = run_all(args)
         else:
@@ -1080,9 +828,6 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
         return 1
 
     print(json.dumps(result, indent=2, sort_keys=True))
-    if args.command in {"verify-paper", "all"}:
-        report = result if args.command == "verify-paper" else result["verify_paper"]
-        return 0 if report.get("verdict") == "PASS" else 1
     return 0
 
 

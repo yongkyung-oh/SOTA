@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import os
 from pathlib import Path
 from typing import Any
@@ -108,12 +107,3 @@ def write_figure1(df: pd.DataFrame, out_dir: Path) -> dict[str, Path]:
     plt.close(fig)
 
     return {"figure1_input": input_path, "trend_png": png_path, "trend_pdf": pdf_path}
-
-
-def write_check(report: dict[str, Any], out_dir: Path) -> Path:
-    out_dir.mkdir(parents=True, exist_ok=True)
-    path = out_dir / "check.json"
-    with path.open("w", encoding="utf-8") as handle:
-        json.dump(report, handle, indent=2, sort_keys=True)
-        handle.write("\n")
-    return path

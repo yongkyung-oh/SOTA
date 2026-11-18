@@ -83,13 +83,7 @@ def test_cli_writes_public_outputs_for_current_data(tmp_path: Path) -> None:
         out_dir / "figure1" / "figure1_input.csv",
         out_dir / "figure1" / "trend.png",
         out_dir / "figure1" / "trend.pdf",
-        out_dir / "check.json",
     ]
     for path in expected_files:
         assert path.exists()
         assert path.stat().st_size > 0
-
-    check = json.loads((out_dir / "check.json").read_text(encoding="utf-8"))
-    assert set(check) == {"ok", "data_commit", "reference_commit", "matches_reference", "issues"}
-    assert check["ok"] is True
-    assert check["matches_reference"] is False

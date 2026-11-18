@@ -71,20 +71,6 @@ $HOME/sota-output/counter/
 
 ---
 
-## 📊 Figure 1
-
-<div align="center">
-
-![Figure 1 — SOTA mentions across major AI conferences, 2021–2025](results/figure1/trend.png)
-
-</div>
-
-> *Published papers mentioning “state-of-the-art” in abstracts across major AI
-> conferences (2021–2025). **Darker** bars indicate SOTA mentions; **lighter**
-> bars indicate other papers.*
-
----
-
 ## 🔖 Data version
 
 Use the reference commit below for the paper tables.
@@ -98,40 +84,6 @@ The paper tables were generated from Paper Copilot commit:
 ```bash
 git -C data/paperlists checkout 29c55620f95f7965b7d2772fab08f35e08dacc8f
 ```
-
----
-
-## 📈 Venue ratios (%)
-
-SOTA-mention ratios for the paper period, 2021–2025. **Bold** venues are the six
-shown in Figure 1; the rest are related AI/ML venues for comparison.
-
-| Conference | 2021 | 2022 | 2023 | 2024 | 2025 |
-|---|---:|---:|---:|---:|---:|
-| **AAAI** | 36.82 | 39.04 | 38.72 | 39.98 | 36.39 |
-| **ACL** | 32.68 | 30.14 | 27.81 | 20.53 | 19.72 |
-| AISTATS | 12.75 | 11.99 | 12.50 | 12.80 | 15.09 |
-| **CVPR** | 53.28 | 51.79 | 46.21 | 42.23 | 41.24 |
-| CoRL | 22.22 | 24.37 | 20.10 | 20.83 | 25.10 |
-| **ICLR** | 28.60 | 29.04 | 30.22 | 27.83 | 24.38 |
-| **ICML** | 22.32 | 21.25 | 20.70 | 21.69 | 23.43 |
-| **NeurIPS** | 25.00 | 24.68 | 24.97 | 25.05 | 27.72 |
-| RSS | 22.83 | 20.27 | 22.32 | 23.88 | 16.56 |
-| WACV | 52.71 | 52.96 | 51.17 | 46.10 | 45.53 |
-
-<details>
-<summary>📝 Notes on aggregates and a 2026 comparison</summary>
-
-- Figure 1 is based on the six major venues; the additional rows give a simple
-  comparison with four related venues.
-- **Aggregate SOTA-mention ratio** — six Figure 1 venues: **33.38%** (2021) →
-  **28.99%** (2025). All ten venues in the table: **32.95%** (2021) →
-  **29.17%** (2025). The pattern is similar to the paper figure.
-- **ICLR beyond the paper period** — the 2021–2025 annual average is **28.02%**.
-  ICLR 2026 has **1,557** SOTA-mention papers out of **5,358** accepted
-  (**29.06%**).
-
-</details>
 
 ---
 
